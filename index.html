@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="title" content="A Graph-Based Planning Framework with Fixed-Path Time Scaling for Redundant Manipulation Systems">
+  <meta name="description" content="A graph-based trajectory planning framework that separates configuration-continuous IK path selection from fixed-path time scaling, with a common TOPP-RA backend evaluated across four redundant manipulation platform classes.">
+  <meta name="keywords" content="redundant manipulation, inverse kinematics, task-space trajectory planning, time-optimal path parameterization, TOPP-RA, dual-arm, aerial manipulation, mobile manipulation">
+  <meta name="author" content="Daum Park, Bohyeong Pak, Sanghyun Kim">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="RCILab at KHU">
+  <meta property="og:title" content="A Graph-Based Planning Framework with Fixed-Path Time Scaling for Redundant Manipulation Systems">
+  <meta property="og:description" content="Graph-based IK path selection + fixed-path TOPP-RA timing, unified across serial, dual-arm, aerial, and mobile manipulators.">
+  <meta property="og:image" content="static/images/fig_pipeline.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Proposed trajectory planning pipeline">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="A Graph-Based Planning Framework with Fixed-Path Time Scaling for Redundant Manipulation Systems">
+  <meta name="twitter:description" content="Graph-based IK path selection + fixed-path TOPP-RA timing, unified across serial, dual-arm, aerial, and mobile manipulators.">
+  <meta name="twitter:image" content="static/images/fig_pipeline.png">
+
+  <meta name="citation_title" content="A Graph-Based Planning Framework with Fixed-Path Time Scaling for Redundant Manipulation Systems">
+  <meta name="citation_author" content="Park, Daum">
+  <meta name="citation_author" content="Pak, Bohyeong">
+  <meta name="citation_author" content="Kim, Sanghyun">
+  <meta name="citation_publication_date" content="2026">
+
+  <meta name="theme-color" content="#2563eb">
+  <meta name="msapplication-TileColor" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://ajax.googleapis.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+  <title>Graph-Based TOPP for Redundant Manipulation | RCILab at KHU</title>
+
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link rel="apple-touch-icon" href="static/images/favicon.ico">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <link rel="preload" href="static/css/bulma-carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/bulma-slider.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+  <noscript>
+    <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  </noscript>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script defer src="static/js/bulma-carousel.min.js"></script>
+  <script defer src="static/js/bulma-slider.min.js"></script>
+  <script defer src="static/js/index.js"></script>
+</head>
+<body>
+
+  <button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <main id="main-content">
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">A Graph-Based Planning Framework with Fixed-Path Time Scaling for Redundant Manipulation Systems</h1>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                <a href="#" target="_blank">Daum Park</a><sup>1</sup>,</span>
+              <span class="author-block">
+                <a href="#" target="_blank">Bohyeong Pak</a><sup>1</sup>,</span>
+              <span class="author-block">
+                <a href="https://www.rcilab.khu.ac.kr" target="_blank">Sanghyun Kim</a><sup>1,&dagger;</sup></span>
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                <sup>1</sup>Kyung Hee University
+              </span>
+              <span class="eql-cntrb">
+                <small><br><sup>&dagger;</sup>Corresponding Author</small>
+              </span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="hero teaser">
+    <div class="container is-max-widescreen">
+      <div class="hero-body">
+        <div class="columns is-centered has-text-centered">
+          <div class="column is-10">
+            <h2 class="title is-3">Trajectory Demonstrations</h2>
+            <p class="section-intro">
+              Accepted timed trajectories across four redundant manipulation platform classes and three scenario variants.
+            </p>
+          </div>
+        </div>
+
+        <div class="video-grid" aria-label="Trajectory demonstration videos">
+          <div class="video-grid-header video-grid-spacer"></div>
+          <div class="video-grid-header">Scenario 1</div>
+          <div class="video-grid-header">Scenario 2</div>
+          <div class="video-grid-header">Scenario 3</div>
+
+          <div class="video-row-label">SRM</div>
+          <figure class="video-tile">
+            <video autoplay muted loop playsinline preload="metadata">
+              <source src="static/videos/single_nom.mp4" type="video/mp4">
+            </video>
+          </figure>
+          <figure class="video-tile">
+            <video autoplay muted loop playsinline preload="metadata">
+              <source src="static/videos/single_obs.mp4" type="video/mp4">
+            </video>
+          </figure>
+          <figure class="video-tile">
+            <video autoplay muted loop playsinline preload="metadata">
+              <source src="static/videos/single_ori.mp4" type="video/mp4">
+            </video>
+          </figure>
+
+          <div class="video-row-label">CDM</div>
+          <figure class="video-tile">
+            <video autoplay muted loop playsinline preload="metadata">
+              <source src="static/videos/bi_nom.mp4" type="video/mp4">
+            </video>
+          </figure>
+          <figure class="video-tile">
+            <video autoplay muted loop playsinline preload="metadata">
+              <source src="static/videos/bi_obs.mp4" type="video/mp4">
+            </video>
+          </figure>
+          <figure class="video-tile">
+            <video autoplay muted loop playsinline preload="metadata">
+              <source src="static/videos/bi_ori.mp4" type="video/mp4">
+            </video>
+          </figure>
+
+          <div class="video-row-label">OAM</div>
+          <figure class="video-tile">
+            <video autoplay muted loop playsinline preload="metadata">
+              <source src="static/videos/oam_nom.mp4" type="video/mp4">
+            </video>
+          </figure>
+          <figure class="video-tile">
+            <video autoplay muted loop playsinline preload="metadata">
+              <source src="static/videos/oam_obs.mp4" type="video/mp4">
+            </video>
+          </figure>
+          <figure class="video-tile">
+            <video autoplay muted loop playsinline preload="metadata">
+              <source src="static/videos/oam_ori.mp4" type="video/mp4">
+            </video>
+          </figure>
+
+          <div class="video-row-label">NMM</div>
+          <figure class="video-tile">
+            <video autoplay muted loop playsinline preload="metadata">
+              <source src="static/videos/nmm_nom.mp4" type="video/mp4">
+            </video>
+          </figure>
+          <figure class="video-tile">
+            <video autoplay muted loop playsinline preload="metadata">
+              <source src="static/videos/nmm_obs.mp4" type="video/mp4">
+            </video>
+          </figure>
+          <figure class="video-tile">
+            <video autoplay muted loop playsinline preload="metadata">
+              <source src="static/videos/nmm_ori.mp4" type="video/mp4">
+            </video>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              Redundant manipulation systems following prescribed task-space paths must select among many
+              inverse-kinematics solutions at each waypoint without introducing discontinuous joint-space
+              transitions or violating platform-specific actuation constraints. This paper presents a
+              graph-based trajectory planning framework that addresses this by separating geometric path
+              selection from fixed-path time scaling: multiple IK candidates are generated at each waypoint,
+              a configuration-continuous path is selected by dynamic programming on a layered directed
+              acyclic graph, and a time scaling is then computed for the fixed path. The central result is
+              that sampled fixed-path timing constraints from four structurally distinct platform
+              classes&mdash;serial joint torque, cooperative wrench balance, aerial thrust allocation, and
+              nonholonomic wheel-rate and arm-torque limits&mdash;each reduce to admissible path-acceleration
+              intervals, enabling a common path-coordinate timing backend to operate without platform-specific
+              modification. The framework is evaluated on twelve representative scenarios spanning the four
+              platform classes, with <em>N</em>&nbsp;=&nbsp;50 repeated model-based trials per scenario; all
+              trials achieve planning success and pass post-planning simulation across the full scenario set.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section hero">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column"><h2 class="title is-3">Methodology</h2></div>
+      </div>
+
+      <div style="text-align: center; margin-bottom: 1rem;">
+        <img src="static/images/fig_pipeline.png" alt="Proposed trajectory planning pipeline"
+             style="width: 100%; max-width: 1100px; display: block; margin: 0 auto 1.5rem; border-radius: 6px;">
+        <p class="fig-caption" style="font-size: 1rem; line-height: 1.6;">
+          <strong>Pipeline overview.</strong>
+          The two stages&mdash;geometric path selection and fixed-path time scaling&mdash;are bridged by
+          path fixation. Geometric path selection produces a configuration-continuous IK path on a layered DAG;
+          fixed-path time scaling solves a TOPP instance using platform-specific acceleration-bound intervals.
+          The platform evaluator <em>F<sub>plat</sub></em> supplies seven adapter components without touching
+          either stage's shared logic.
+        </p>
+      </div>
+
+      <div class="columns is-multiline" style="margin-top: 1.5rem;">
+
+        <div class="column is-full">
+          <div class="method-card is-horizontal">
+            <div class="card-content">
+              <div class="card-tag">Stage 1 &mdash; Geometric Path Selection</div>
+              <h4>Candidate Sets, Static Preview, and Layered DAG</h4>
+            </div>
+            <div>
+              <p>
+                At each task-space waypoint <em>y<sub>k</sub></em>, a platform-specific generator
+                Gen<sub>plat</sub> samples a finite candidate set <em>C<sub>k</sub></em> from an
+                IK solver bank (multistart FABRIK + damped least-squares). Each candidate is screened by a
+                node-validity predicate <em>V<sub>k</sub></em>&mdash;sampled pose satisfaction, joint or
+                allocation limits, collision clearance, and a static support-wrench or static-torque preview
+                that catches timing-invariant infeasibility before graph inclusion. Adjacent candidates are
+                connected by an edge predicate &epsilon;<sub>k</sub> that encodes sampled continuity, velocity
+                bounds, and platform-specific transition constraints (e.g., nonholonomic connectors). A single
+                backward sweep on the resulting layered DAG yields the globally optimal finite-graph path in
+                <em>O</em>(<em>NK</em><sup>2</sup>) relaxations; if the terminal reachable set is empty, the
+                planner reports a graph-disconnection failure rather than invoking adaptive resampling.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="column is-full">
+          <div class="method-card is-horizontal">
+            <div class="card-content">
+              <div class="card-tag">Stage 2 &mdash; Fixed-Path Time Scaling</div>
+              <h4>Common TOPP-RA Backend via Acceleration-Bound Intervals</h4>
+            </div>
+            <div>
+              <p>
+                Once the state path is fixed, finding a feasible schedule is a Time-Optimal Path
+                Parameterization (TOPP) instance. The path is parameterized by arc length
+                <em>s</em>&nbsp;&isin;&nbsp;[0, <em>S</em>], with optimization variables
+                <em>x<sub>k</sub></em>&nbsp;=&nbsp;<em>&sdot;s<sub>k</sub></em><sup>2</sup> and
+                <em>u<sub>k</sub></em>&nbsp;=&nbsp;<em>&sdot;&sdot;s<sub>k</sub></em>.
+                Platform-specific feasibility enters through an acceleration-bound function
+                <em>B<sub>plat</sub></em> returning, at each grid point, a closed interval
+                [<em>u<sub>lo</sub></em>, <em>u<sub>hi</sub></em>]. A backward/forward reachability sweep
+                in the path-coordinate variables produces the speed profile along the upper boundary of the
+                controllable set. The four evaluated platform classes share this backend without modification.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="column is-full">
+          <div class="method-card is-horizontal">
+            <div class="card-content">
+              <div class="card-tag">Pipeline-Admissibility</div>
+              <h4>Four Constraint Families, One Closed Interval at Each Grid Point</h4>
+            </div>
+            <div>
+              <p>
+                A platform is <em>pipeline-admissible</em> when its sampled fixed-path timing constraints can be
+                written in TOPP-RA standard form &Omega;<sub>i</sub>&nbsp;=&nbsp;{(<em>u</em>,&nbsp;<em>x</em>)
+                | <em>a<sub>i</sub>u</em>&nbsp;+&nbsp;<em>b<sub>i</sub>x</em>&nbsp;+&nbsp;<em>c<sub>i</sub></em>
+                &nbsp;&isin;&nbsp;<em>C<sub>i</sub></em>} with <em>C<sub>i</sub></em> closed. Lemmas 1&ndash;4 in
+                the paper show that (i) affine RNEA torque chains intersected with per-joint limits (serial),
+                (ii) bilateral cooperative wrench balance distributions (dual-arm), (iii) thrust-allocation
+                zonotopes intersected with a 1D affine path-coordinate line (aerial), and (iv)
+                geometry-conditioned affine bounds after connector path fixation (nonholonomic mobile) each
+                yield a closed acceleration interval at every grid point&mdash;so the shared TOPP-RA pass applies
+                without modification.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="column is-full">
+          <div class="method-card is-horizontal">
+            <div class="card-content">
+              <div class="card-tag">Platform Specification</div>
+              <h4>Seven Adapter Components Plug Into the Shared Scaffold</h4>
+            </div>
+            <div>
+              <p>
+                A new platform is integrated by specifying seven components&mdash;state space, task map,
+                candidate generator, node validity, edge predicate, timing-bound model, and planning-model
+                evaluator&mdash;while the geometric path selection and time-scaling stages operate unchanged.
+                Four structural adapter patterns recur: <em>product-space candidates</em> for shared-object
+                constraints, <em>implicit-base generation</em> for floating bases derived from arm reachability,
+                <em>auxiliary state</em> for kinematically coupled secondary axes, and
+                <em>connector-lifted edge predicates</em> for non-Euclidean mobility.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column"><h2 class="title is-3">Platform Instantiations</h2></div>
+      </div>
+
+      <div class="card-image" style="text-align: center;">
+        <img src="static/images/fig_platforms.png" alt="Representative scenarios for SRM, CDM, OAM, and NMM"
+             style="width: 100%; max-width: 1100px; border-radius: 6px;">
+        <p class="fig-caption" style="margin-top: 0.75rem; font-size: 0.9rem; line-height: 1.6; color: #4a4a4a;">
+          Representative scenario visualizations. Rows correspond to SRM, CDM, OAM, and NMM; columns to
+          Scenarios 1&ndash;3 in the benchmark suite. Each panel overlays the prescribed task path, sampled
+          target poses, obstacles when present, and ghosted robot states from an accepted timed trajectory.
+        </p>
+      </div>
+
+      <div class="columns is-multiline" style="margin-top: 2rem;">
+
+        <div class="column is-half">
+          <div class="method-card">
+            <div class="card-content">
+              <div class="card-tag">SRM</div>
+              <h4>Serial Redundant Manipulator</h4>
+              <p style="margin-top: 0.6rem;">
+                A 7-DoF arm with one extra DoF and joint-torque limits. The path-parameterized RNEA torque
+                <em>&tau;</em>&nbsp;=&nbsp;<em>a</em>(<em>s</em>)<em>u</em>&nbsp;+&nbsp;<em>b</em>(<em>s</em>,<em>x</em>)<em>x</em>&nbsp;+&nbsp;<em>c</em>(<em>s</em>)
+                is affine in <em>u</em>, and each per-joint limit contributes a half-interval whose intersection is
+                a closed interval. Pinocchio supplies the inverse-dynamics evaluation.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="column is-half">
+          <div class="method-card">
+            <div class="card-content">
+              <div class="card-tag">CDM</div>
+              <h4>Cooperative Dual-Arm Manipulator</h4>
+              <p style="margin-top: 0.6rem;">
+                Two arms rigidly grasping a shared object. Candidates live on a product configuration space
+                with object-consistency constraints; per-arm torque budgets are coupled through a bilateral
+                wrench-balance solve. Per-arm timing constraints reduce to the same affine coefficient form
+                as the serial case, so the intersection is again a closed interval.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="column is-half">
+          <div class="method-card">
+            <div class="card-content">
+              <div class="card-tag">OAM</div>
+              <h4>Omnidirectional Aerial Manipulator</h4>
+              <p style="margin-top: 0.6rem;">
+                Floating-base arm with tilt-rotor propulsion. Base pose is implied by an arm candidate via
+                reverse-chain kinematics. Feasibility requires the path-coordinate body wrench
+                <em>W</em>(<em>s</em>,<em>x</em>,<em>u</em>)&nbsp;&isin;&nbsp;<em>&Wscr;</em>(<em>&phi;</em>),
+                a 1D affine line through a thrust-allocation zonotope&mdash;an exact closed interval without
+                convex relaxation.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="column is-half">
+          <div class="method-card">
+            <div class="card-content">
+              <div class="card-tag">NMM</div>
+              <h4>Nonholonomic Mobile Manipulator</h4>
+              <p style="margin-top: 0.6rem;">
+                Differential-drive base + onboard arm. The edge predicate selects a kinematically valid
+                bounded-curvature connector (Dubins-style) between consecutive base states; the same
+                parameterization defines base motion for timing. Wheel-rate and acceleration limits combined
+                with sampled arm-torque bounds yield a closed acceleration interval on each connector segment.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column"><h2 class="title is-3">Experiments</h2></div>
+      </div>
+
+      <div class="columns is-centered" style="margin-top: 1rem;">
+        <div class="column is-full">
+          <h3 class="title is-4">Cross-Platform Acceptance Benchmark</h3>
+          <p>
+            Twelve scenarios&mdash;three per platform class&mdash;evaluated with <em>N</em>&nbsp;=&nbsp;50
+            repeated trials each. Across all 600 trials, every scenario achieves 100% acceptance under graph
+            connectivity, timing feasibility, fallback-free execution, and post-planning time-domain simulation
+            at &Delta;<em>t</em>&nbsp;=&nbsp;0.001&nbsp;s. Maximum task-space tracking error stays below
+            1&nbsp;mm in every scenario. The main suite uses TOPP-RA derating
+            &alpha;&nbsp;=&nbsp;0.90 to provide a uniform 10% analytical timing margin.
+          </p>
+
+          <div class="table-container" style="margin-top: 1.5rem;">
+            <table class="table is-bordered is-striped is-hoverable is-fullwidth has-text-centered">
+              <thead>
+                <tr>
+                  <th rowspan="2" style="vertical-align: middle;">Platform</th>
+                  <th colspan="3">Scenario 1</th>
+                  <th colspan="3">Scenario 2</th>
+                  <th colspan="3">Scenario 3</th>
+                </tr>
+                <tr>
+                  <th>Time (s)</th><th>Succ.</th><th>Pos. err. (mm)</th>
+                  <th>Time (s)</th><th>Succ.</th><th>Pos. err. (mm)</th>
+                  <th>Time (s)</th><th>Succ.</th><th>Pos. err. (mm)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>SRM</strong></td>
+                  <td>1.577 &plusmn; 0.007</td><td>100%</td><td>0.998</td>
+                  <td>1.401 &plusmn; 0.006</td><td>100%</td><td>0.998</td>
+                  <td>0.852 &plusmn; 0.007</td><td>100%</td><td>0.994</td>
+                </tr>
+                <tr>
+                  <td><strong>CDM</strong></td>
+                  <td>2.626 &plusmn; 0.096</td><td>100%</td><td>0.496</td>
+                  <td>5.232 &plusmn; 0.172</td><td>100%</td><td>0.373</td>
+                  <td>2.446 &plusmn; 0.051</td><td>100%</td><td>0.683</td>
+                </tr>
+                <tr>
+                  <td><strong>OAM</strong></td>
+                  <td>0.988 &plusmn; 0.009</td><td>100%</td><td>0.004</td>
+                  <td>1.315 &plusmn; 0.089</td><td>100%</td><td>0.004</td>
+                  <td>0.728 &plusmn; 0.006</td><td>100%</td><td>0.073</td>
+                </tr>
+                <tr>
+                  <td><strong>NMM</strong></td>
+                  <td>0.874 &plusmn; 0.024</td><td>100%</td><td>0.967</td>
+                  <td>1.101 &plusmn; 0.034</td><td>100%</td><td>0.839</td>
+                  <td>1.368 &plusmn; 0.078</td><td>100%</td><td>0.928</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="columns is-centered" style="margin-top: 3rem;">
+        <div class="column is-full">
+          <h3 class="title is-4">Timing Profile Diagnostics</h3>
+          <p>
+            One accepted trial per scenario, visualizing the path-coordinate timing problem solved by the
+            shared backend. Below: selected fixed-path speed profile against the controllable upper bound
+            <em>K<sub>i</sub></em>. Speed is normalized within each panel; rows correspond to platform class
+            and columns to Scenarios 1&ndash;3.
+          </p>
+          <div style="text-align: center; margin-top: 1rem;">
+            <img src="static/images/fig_timing_profile.png"
+                 alt="Selected fixed-path speed profiles with TOPP-RA controllable-set upper bounds"
+                 style="width: 100%; max-width: 1100px; border-radius: 6px;">
+          </div>
+
+          <p style="margin-top: 2rem;">
+            Local path-acceleration intervals for the same accepted trials. The shaded band is the admissible
+            interval [<em>u<sub>i</sub></em><sup>&minus;</sup>, <em>u<sub>i</sub></em><sup>+</sup>] induced
+            by the platform-specific feasibility model; the curve is the selected TOPP-RA acceleration
+            <em>u<sub>i</sub></em>&nbsp;=&nbsp;<em>&sdot;&sdot;s<sub>i</sub></em>.
+          </p>
+          <div style="text-align: center; margin-top: 1rem;">
+            <img src="static/images/fig_timing_acceleration_bounds.png"
+                 alt="Local path-acceleration intervals used by the fixed-path timing backend"
+                 style="width: 100%; max-width: 1100px; border-radius: 6px;">
+          </div>
+        </div>
+      </div>
+
+      <div class="columns is-centered" style="margin-top: 3rem;">
+        <div class="column is-full">
+          <h3 class="title is-4">Pipeline Component Ablations</h3>
+          <p>
+            Each ablation removes or weakens one planning-stage element while keeping the downstream timing
+            and post-planning simulation semantics fixed. Bypassing node validity in OAM&nbsp;S3 makes the
+            timing problem TOPP-infeasible; replacing TOPP-RA with structural fixed timing in NMM&nbsp;S2
+            yields torque utilization above 3&times; the limit; and weakening the nonholonomic connector
+            predicate in NMM&nbsp;S2 produces torque utilization 0.91&nbsp;&gt;&nbsp;&alpha;. All ablated
+            cases produce zero accepted trials out of ten.
+          </p>
+
+          <div class="table-container" style="margin-top: 1.5rem;">
+            <table class="table is-bordered is-striped is-hoverable is-fullwidth has-text-centered">
+              <thead>
+                <tr>
+                  <th>Element</th>
+                  <th>Case</th>
+                  <th>Failure metric</th>
+                  <th>Value</th>
+                  <th>Accepted</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Node validity</td><td>OAM&nbsp;S3</td>
+                  <td>TOPP status</td><td>infeasible</td><td>0/10</td>
+                </tr>
+                <tr>
+                  <td>Fixed-path timing</td><td>NMM&nbsp;S2</td>
+                  <td>Torque util.</td><td>3.15</td><td>0/10</td>
+                </tr>
+                <tr>
+                  <td>Edge predicate</td><td>NMM&nbsp;S2</td>
+                  <td>Torque util.</td><td>0.91 &gt; &alpha;</td><td>0/10</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="columns is-centered" style="margin-top: 3rem;">
+        <div class="column is-full">
+          <h3 class="title is-4">Experimental Setup</h3>
+          <p>
+            All experiments run on an AMD Ryzen 5 7500F CPU (12 threads, 30&nbsp;GiB RAM) with an NVIDIA
+            GeForce RTX 5070 GPU on Ubuntu 22.04.5 LTS. The implementation uses Python 3.10, NumPy 1.26,
+            SciPy 1.15, and Pinocchio 3.9 (ROS&nbsp;2 Humble) for rigid-body dynamics. Candidate generation,
+            node validity, edge feasibility, and DAG relaxation use platform-specific native or GPU batch
+            backends where enabled; path-coordinate interval construction and the backward/forward reachability
+            sweep run on CPU. Reported wall times measure task-level planning through accepted schedule
+            construction and exclude the post-planning simulation pass.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="section hero is-light">
+    <div class="container is-max-widescreen">
+      <div class="columns is-centered">
+        <div class="column is-11">
+          <h2 class="title is-3 has-text-centered">People</h2>
+
+          <div class="columns is-centered is-variable is-8 mt-5 is-mobile-multiline">
+
+            <div class="column has-text-centered">
+              <div class="person-image-container">
+                <img src="static/images/people/Daum_Park.png" alt="Daum Park"
+                     style="width: 100%; max-width: 180px; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s ease;">
+              </div>
+              <p class="is-size-5 mt-3" style="white-space: nowrap;">
+                <a href="#" class="has-text-dark" style="font-weight: 600;">Daum Park</a>
+              </p>
+              <p class="is-size-6 has-text-grey">Kyung Hee Univ.</p>
+            </div>
+
+            <div class="column has-text-centered">
+              <div class="person-image-container">
+                <img src="static/images/people/Bohyeong_Pak.png" alt="Bohyeong Pak"
+                     style="width: 100%; max-width: 180px; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s ease;">
+              </div>
+              <p class="is-size-5 mt-3" style="white-space: nowrap;">
+                <a href="mailto:bhe1004@khu.ac.kr" class="has-text-dark" style="font-weight: 600;">Bohyeong Pak</a>
+              </p>
+              <p class="is-size-6 has-text-grey">Kyung Hee Univ.</p>
+            </div>
+
+            <div class="column has-text-centered">
+              <div class="person-image-container">
+                <img src="static/images/people/Sanghyun_Kim.jpg" alt="Sanghyun Kim"
+                     style="width: 100%; max-width: 180px; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s ease;">
+              </div>
+              <p class="is-size-5 mt-3" style="white-space: nowrap;">
+                <a href="https://www.rcilab.khu.ac.kr" target="_blank" class="has-text-dark" style="font-weight: 600;">Sanghyun Kim</a>
+              </p>
+              <p class="is-size-6 has-text-grey">Kyung Hee Univ.</p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .person-image-container img:hover { transform: translateY(-5px); }
+    @media screen and (max-width: 768px) {
+      .columns.is-variable.is-8 { display: flex; flex-wrap: wrap; justify-content: center; }
+    }
+  </style>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content has-text-centered">
+            <p>
+              <a href="https://www.rcilab.khu.ac.kr" target="_blank">Robot Control and Interaction (RCI) Laboratory</a>, Kyung Hee University.
+              <br>
+              This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
