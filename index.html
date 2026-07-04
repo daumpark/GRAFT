@@ -530,15 +530,46 @@
             </p>
           </div>
 
-          <div style="text-align: center; margin-top: 1.5rem;">
-            <img src="static/images/fig_expb.png"
-                 alt="Preview-driven branch selection under load: GRAFT-Full (top) vs GRAFT-P (bottom)"
-                 style="width: 100%; max-width: 1100px; border-radius: 6px;">
+          <div style="margin-top: 1.5rem;">
+            <div class="video-grid" aria-label="Preview-recall under load videos by platform" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
+              <div>
+                <figure class="video-tile" style="aspect-ratio: 9 / 16;">
+                  <video autoplay muted loop playsinline preload="metadata">
+                    <source src="static/videos/ivc_srm.mp4" type="video/mp4">
+                  </video>
+                </figure>
+                <p style="text-align: center; font-weight: 700; margin-top: 0.5rem; color: var(--text-primary);">SRM</p>
+              </div>
+              <div>
+                <figure class="video-tile" style="aspect-ratio: 9 / 16;">
+                  <video autoplay muted loop playsinline preload="metadata">
+                    <source src="static/videos/ivc_cdm.mp4" type="video/mp4">
+                  </video>
+                </figure>
+                <p style="text-align: center; font-weight: 700; margin-top: 0.5rem; color: var(--text-primary);">CDM</p>
+              </div>
+              <div>
+                <figure class="video-tile" style="aspect-ratio: 9 / 16;">
+                  <video autoplay muted loop playsinline preload="metadata">
+                    <source src="static/videos/ivc_oam.mp4" type="video/mp4">
+                  </video>
+                </figure>
+                <p style="text-align: center; font-weight: 700; margin-top: 0.5rem; color: var(--text-primary);">OAM</p>
+              </div>
+              <div>
+                <figure class="video-tile" style="aspect-ratio: 9 / 16;">
+                  <video autoplay muted loop playsinline preload="metadata">
+                    <source src="static/videos/ivc_nmm.mp4" type="video/mp4">
+                  </video>
+                </figure>
+                <p style="text-align: center; font-weight: 700; margin-top: 0.5rem; color: var(--text-primary);">NMM</p>
+              </div>
+            </div>
             <p class="fig-caption" style="margin-top: 0.6rem;">
-              Preview-driven branch selection under load (SRM, CDM, OAM, NMM; left to right). Top (blue):
-              GRAFT-Full, whose platform-model preview steers selection to a load-feasible configuration.
-              Bottom (red): GRAFT-P, whose preview-less selection drives the platform into an
-              actuation-infeasible configuration under the same swept load (arrows).
+              Preview-driven branch selection under load (SRM, CDM, OAM, NMM; left to right).
+              GRAFT-Full uses the platform-model preview to steer selection to a load-feasible configuration,
+              while GRAFT-P's preview-less selection can drive the platform into an actuation-infeasible
+              configuration under the same swept load.
             </p>
           </div>
         </div>
